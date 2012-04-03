@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<presets xmlns="http://josm.openstreetmap.de/tagging-preset-1.0" version="1.3_2012-03-01" author="Sebastian Klemm" link="http://wiki.openstreetmap.org/wiki/Key:parking:lane" shortdescription="Parking lanes" de.shortdescription="Parkstreifen" description="Parking lanes along roads and parking/stopping restrictions" de.description="Parkstreifen/Parkplätze entlang von Straßen und Park-/Halteverbote">
+
+    <group name="Parking lanes" de.name="Parkstreifen" icon="presets/parking.png">
+        <item name="same on both sides of street" de.name="beide Straßenseiten gleich" icon="presets/parking.png" type="way">
+            <label text="Parking lanes" de.text="Parkstreifen entlang von Straßen"/>
+            <combo text="space type" de.text="Art und Anordnung" key="parking:lane:both" values="parallel,diagonal,perpendicular,no_parking,no_stopping,fire_lane" de.display_values="längs,diagonal,quer,Parkverbot,Halteverbot,Feuerwehrspur" delete_if_empty="true"/>
+            <combo text="condition" de.text="Bedingungen" key="parking:condition:both" values="free,disc,ticket,custumers,residents,private" de.display_values="kostenlos,Parkscheibe,Parkschein/-gebühr,nur Kunden,nur Anwohner,privat" delete_if_empty="true"/>
+            <optional>
+                <combo text="maxstay" de.text="max. Parkzeit" key="parking:condition:both:maxstay" values="15 min,30 min,1 h,2 h,3 h" delete_if_empty="true"/>
+                <text text="time interval" de.text="Gültigkeits-Zeitraum" key="parking:condition:both:time_interval" delete_if_empty="true"/>
+                <text text="capacity (each side)" de.text="Kapazität (pro Seite)" key="parking:condition:both:capacity" delete_if_empty="true"/>
+            </optional>
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/parking:lane"/>
+        </item>
+
+        <item name="different on both sides of street" de.name="beide Straßenseiten unterschiedlich" icon="presets/parking.png" type="way">
+            <label text="Parking lanes" de.text="Parkstreifen entlang von Straßen"/>
+            <space/>
+            <label text="Right side of street" de.text="Rechte Straßenseite"/>
+            <combo text="space type" de.text="Art und Anordnung" key="parking:lane:right" values="parallel,diagonal,perpendicular,no_parking,no_stopping,fire_lane" de.display_values="längs,diagonal,quer,Parkverbot,Halteverbot,Feuerwehrspur" delete_if_empty="true"/>
+            <combo text="condition" de.text="Bedingungen" key="parking:condition:right" values="free,disc,ticket,custumers,residents,private" de.display_values="kostenlos,Parkscheibe,Parkschein/-gebühr,nur Kunden,nur Anwohner,privat" delete_if_empty="true"/>
+            <optional>
+                <combo text="maxstay" de.text="max. Parkzeit" key="parking:condition:right:maxstay" values="15 min,30 min,1 h,2 h,3 h" delete_if_empty="true"/>
+                <text text="time interval" de.text="Gültigkeits-Zeitraum" key="parking:condition:right:time_interval" delete_if_empty="true"/>
+                <text text="capacity" de.text="Kapazität" key="parking:condition:right:capacity" delete_if_empty="true"/>
+            </optional>
+            <space/>
+            <space/>
+            
+            <label text="Left side of street" de.text="Linke Straßenseite"/>
+            <combo text="space type" de.text="Art und Anordnung" key="parking:lane:left" values="parallel,diagonal,perpendicular,no_parking,no_stopping,fire_lane" de.display_values="längs,diagonal,quer,Parkverbot,Halteverbot,Feuerwehrspur" delete_if_empty="true"/>
+            <combo text="condition" de.text="Bedingungen" key="parking:condition:left" values="free,disc,ticket,custumers,residents,private" de.display_values="kostenlos,Parkscheibe,Parkschein/-gebühr,nur Kunden,nur Anwohner,privat" delete_if_empty="true"/>
+            <optional>
+                <combo text="maxstay" de.text="max. Parkzeit" key="parking:condition:left:maxstay" values="15 min,30 min,1 h,2 h,3 h" delete_if_empty="true"/>
+                <text text="time interval" de.text="Gültigkeits-Zeitraum" key="parking:condition:left:time_interval" delete_if_empty="true"/>
+                <text text="capacity" de.text="Kapazität" key="parking:condition:left:capacity" delete_if_empty="true"/>
+            </optional>
+            <link href="http://wiki.openstreetmap.org/wiki/Proposed_features/parking:lane"/>
+        </item>
+    </group>
+</presets>

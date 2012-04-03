@@ -1,0 +1,101 @@
+
+<!DOCTYPE HTML>
+<html>
+  <head>
+ 	<script type="text/javascript" src="jquery.min.js"></script>
+ 	<script type="text/javascript" src="jquery.blockUI.js"></script>
+	<link type="text/css" rel="stylesheet" media="screen" href="jqtouch.css">
+	<link type="text/css" rel="stylesheet" media="screen" href="themes/apple/theme.css">
+	 <script type="text/javascript" charset="utf-8" src="cordova-1.5.0.js"></script>
+	<script type="text/javascript" src="jqtouch.js"></script>	
+  	<script type="text/javascript" src="main.js"></script>
+  	
+  	<meta name="viewport" content="user-scalable=no, width=device-width" />
+    <title>Easy Mappr</title>
+    
+       
+  </head>
+  
+  <body>		
+  		
+  		<div id="home">
+		<div class="toolbar">
+		<h1 id="openingmessage"></h1>
+		<a class="button flip" href="#settings">Settings</a>
+		</div>
+		
+		<ul class="rounded">
+		
+		<li class="des"><p id="desc" ></p></li>
+		<li class="geo"><p id="geolocation" ></p></li>
+		<li class="butn"><a href="#mainform">Next</a><br /><br /></li>
+		<li class="arrow"><p id="db" ></p></li>
+		<li class="arrow"><input type="submit" class="submit" name="action"
+		value="Save Changes" onclick="saveSettings()" /></li>		
+		
+		</ul>
+		
+		
+		</div>
+		
+		<div id="settings">
+		<div class="toolbar">
+		<h1>Settings</h1>
+		<a class="button cancel" href="#">Cancel</a>
+		</div>
+		<form method="post">
+		<ul class="rounded">
+		
+		<li><div class="lne">Presets</div>
+      <label>
+        <input type="radio" name="presets" id="presets" value="bwaypoints" />
+        Bicycle Way Points</label>
+      <br /><br />
+      <label>
+        <input type="radio" name="presets" id="presets" value="crafts" />
+        Crafts</label>
+      <br /><br />
+      <label>
+        <input type="radio" name="presets" id="presets" value="mountainbike" />
+        Mountain Bike</label>
+      <br /><br />
+      <label>
+        <input type="radio" name="presets" id="presets" value="parkingfeatures" />
+        Parking Features</label>
+      <br /><br /></li>
+      
+      <li><div class="usr">User Details</div>
+		
+		</li>
+		
+		<li><input type="text" placeholder="Id" name="id" id="idd"
+		autocapitalize="off" autocorrect="off" autocomplete="off" /></li>
+		
+		<li><input type="text" placeholder="User" name="user" id="user"
+		autocapitalize="off" autocorrect="off" autocomplete="off" /></li>
+		
+		<li><input type="submit" class="submit" name="action"
+		value="Save Changes" onclick="saveSettings()" /><br /><br /></li>
+				
+		</ul>
+</form>
+</div>
+
+		<div id="mainform">
+		<div class="toolbar">
+		<h1 id="title">EasyMappr</h1>
+		<a class="button back" href="#">Back</a>
+		</div>
+		<form class="myform" method="get">
+		<input type="submit" class="submit" name="action"
+		value="Save Changes" onclick="saveSettings()" />
+		</form>
+		
+		</div>
+		
+  </body>
+  
+</html>
+    
+   
+  
