@@ -1,0 +1,79 @@
+
+<!DOCTYPE HTML>
+<html>
+  <head>
+ 	
+ 	<script type="text/javascript" src="themes/jquery.min.js"></script>
+ 	<script type="text/javascript" src="themes/jquery.blockUI.js"></script>
+	<link type="text/css" rel="stylesheet" media="screen" href="themes/jqtouch.css">
+	<link type="text/css" rel="stylesheet" media="screen" href="themes/apple/theme.css">
+	<script type="text/javascript" charset="utf-8" src="themes/cordova-1.5.0.js"></script>
+	<script type="text/javascript" src="themes/jqtouch.js"></script>	
+  	<script type="text/javascript" src="main.js"></script>
+  	<link rel="stylesheet" href="themes/jquery.mobile-1.0.1.min.css" />
+  	<script type="text/javascript" src="cord.css"></script>
+  	  	
+  	<meta name="viewport" content="user-scalable=no, width=device-width" />
+    
+    <title>Easy Mappr</title>
+       
+  </head>
+  
+  <body>		
+  		
+  		<div id="home">
+		<div class="toolbar">
+		<h1 id="openingmessage"></h1>
+		<a class="button flip" href="#settings">Settings</a>
+		</div>
+		
+		<ul class="rounded">
+		
+		<li class="des"><p id="desc" ></p></li>
+		<li class="geo"><p id="geolocation" ></p></li>
+		<li class="butn"><a href="#mainform">Next</a></li>	
+		
+		</ul>
+		
+		
+		</div>
+		
+		<div id="settings">
+		<div class="toolbar">
+		<h1>Settings</h1>
+		<a class="button cancel" href="#">Cancel</a>
+		</div>
+		<form method="post">
+		<ul class="rounded">
+		
+		<li><div>Username</div>
+      
+      	<input type="text" placeholder="User Name" name="username" id="username"
+		autocapitalize="on" autocorrect="off" autocomplete="off" /></li>
+		
+		
+		<li><input type="submit" class="submit" name="action"
+		value="Save" onclick="saveSettings()" /><br /></li>
+		
+		</ul>
+</form>
+</div>
+
+		<div id="mainform">
+		<div class="toolbar">
+		<h1 id="title">EasyMappr</h1>
+		<a class="button back" href="#">Back</a>
+		</div>
+		<form class="myform" id="form1" method="get">
+		<p style="text-align:center;">
+		<input type="submit" class="sform" name="action"
+		value="Save" onclick="processForm()"/>
+		<br/>
+		</p>
+		</form>
+		
+		</div>
+		
+  </body>
+  
+</html>
