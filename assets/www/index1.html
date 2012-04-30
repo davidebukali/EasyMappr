@@ -1,11 +1,17 @@
 <!DOCTYPE HTML>
+
 <html>
 
   <head>
+  	<meta name="viewport" content="width=device-width, initial-scale=1"> 
  
     <script type="text/javascript" src="jquery.js"></script>
-    <script>
     
+    
+    <link rel="stylesheet" href="jquery.mobile-1.1.0.min.css" /> 
+    <script type="text/javascript" src="jquery.mobile-1.1.0.min.js"></script>
+    <script type="text/javascript" src="king.js"></script>
+    <script>
 		$(document).bind("mobileinit", function(){
    	 		$.mobile.loadingMessageTextVisible = true;
    	 	    $.support.cors = true;
@@ -14,29 +20,24 @@
 
 	</script> 
     
-    <script type="text/javascript" charset="utf-8" src="cordova-1.5.0.js"></script>
-    <link rel="stylesheet" href="jquery.mobile-1.0.1.min.css" /> 
-    <script type="text/javascript" src="jquery.mobile-1.0.1.min.js"></script>
-     
-    <script type="text/javascript" src="main.js"></script>
     
   </head>
 <body>
 
 <div data-role="page" id="page_home">
-
+ 
 
  <div data-role="header" data-theme="a">
+ 
    <h1>EasyMappr</h1>
-   <a href="#options" data-icon="gear" class="ui-btn-right" data-mini="true">Options</a>
+   <a href="#options" data-icon="gear" class="ui-btn-right" data-mini="true" data-theme="b">Options</a>
  </div><!-- /header -->
 
  <div data-role="content" class='content'>
     <div>
       <label for="page_preset_name"><h2 id="openingmessage"></h2></label>
       <label for="page_preset_description"><p id="desc"></p></label>
-      <label for="page_preset_lat"><b><p id="lat"></p></b></label>
-      <label for="page_preset_lon"><b><p id="lon"></p></b></label>
+      <label for="page_preset_coordinates"><b><p id="geolocation"></p></b></label>
     </div>
     
     <fieldset>
@@ -50,22 +51,23 @@
 
  <div data-role="page" id="options">
  <div data-role="header">
-   <a data-rel="back" data-icon="back" class="ui-btn-left" data-mini="true">Back</a>
+ 
+   <a data-rel="back" data-icon="back" class="ui-btn-left" data-mini="true" data-theme="b">Back</a>
    <h1>Options</h1>
  </div><!-- /header -->
 
  <div data-role="content" class='content'>
  	<div><h2>OSM Login</h2></div>
     <div>
-      <label for="username">Username</label>
-      <input type="text" id="username" />
+      <label for="page_login_name">Username</label>
+      <input type="text" id="page_login_name" />
     </div>
     <div>
-      <label for="pass">Password</label>
-      <input type="password" id="pass" />
+      <label for="page_login_pass">Password</label>
+      <input type="password" id="page_login_pass" />
     </div>
     <fieldset>
-      <div><button id="page_login_submit" type="button" data-theme="b" id="page_login_submit">Save</button></div>
+      <div><button type="button" data-theme="b" id="page_login_submit" onclick="saveSettings()">Login</button></div>
     </fieldset>
   </div><!-- /content -->
 
@@ -76,20 +78,17 @@
 <div data-role="page" id="mainform" data-dom-cache="true">
 
  <div data-role="header">
- <a data-rel="back" data-icon="back" class="ui-btn-left" data-mini="true">Back</a>
+
+ <a data-rel="back" data-icon="back" class="ui-btn-left" data-mini="true" data-theme="b">Back</a>
    <h1>EasyMappr</h1>
- <a id="upload" data-icon="arrow-u" class="ui-btn-right" data-mini="true">Upload</a>
+ <a id="upload" data-icon="arrow-u" class="ui-btn-right" data-mini="true" data-theme="b">Upload</a>
  </div><!-- /header -->
 
  <div data-role="content">
-   <form class="myform" id="form1" method="get" action="">
-		
-		
-      	<div><button type="button" data-theme="b" id="page_save_submit" data-mini="true" data-inline="true"  data-icon="check">Save</button></div>
-    	
-		
-		
+   <form class="myform" id="form1" method="get">
+      	
    </form>
+   <div><button type="button" data-theme="b" id="page_save_submit" data-inline="true"  data-icon="check">Save</button></div>
  </div><!-- /content -->
 
 </div><!-- /page -->
