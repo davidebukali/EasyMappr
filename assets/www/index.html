@@ -1,70 +1,77 @@
 <!DOCTYPE HTML>
 <html>
 
-  <head>
-  	<meta charset="utf-8" />
-  	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="theme.min.css" />
-   <link rel="stylesheet" href="jquery.mobile.structure-1.1.0.min.css" />
-  </head>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="theme.min.css" />
+<link rel="stylesheet" href="jquery.mobile.structure-1.1.0.min.css" />
+</head>
 <body>
 
-<div data-role="page" id="page_home" data-theme="a" >
+  <div data-role="page" id="page_home" data-theme="a">
 
 
- <div data-role="header" data-position="fixed" data-theme="a">
-   <h1>EasyMappr</h1>
-   
-   <div data-role="navbar">
+    <div data-role="header" data-position="fixed" data-theme="a">
+      <h1>EasyMappr</h1>
+
+      <div data-role="navbar">
         <ul>
-           
-            <li><a href="#options" data-icon="gear">Options</a></li>
-            
-  
-          </ul>
-    </div><!-- /navbar -->
-   
- </div><!-- /header -->
 
- <div data-role="content" class='content'>
-    <div>
-      <label for="page_preset_name"><h2 id="openingmessage"></h2></label>
-      <label for="page_preset_description"><p id="desc"></p></label>
-      <label for="page_preset_lat"><p id="lat"></p></label>
-      <label for="page_preset_lon"><p id="lon"></p></label>
+          <li><a href="#options" data-icon="gear">Options</a></li>
+
+        </ul>
+      </div>
+      <!-- /navbar -->
+
     </div>
-    
-      <div><a id="myButton" data-role="button">START Mapping</a></div>
-  
+    <!-- /header -->
 
-  </div><!-- /content -->
+    <div data-role="content" class='content'>
+      <div>
+        <label for="page_preset_name"><h2 id="openingmessage"></h2></label> <label
+          for="page_preset_description"><p id="desc"></p></label> <label
+          for="page_preset_lat"><p id="lat"></p></label> <label
+          for="page_preset_lon"><p id="lon"></p></label>
+      </div>
+
+      <div>
+        <a id="myButton" data-role="button">START Mapping</a>
+      </div>
 
 
-</div><!-- /page -->
+    </div>
+    <!-- /content -->
 
 
- <div data-role="page" id="options" data-theme="a">
- <div data-role="header" data-theme="a">
-   
-   <h1>Options</h1>
-   
-   
-   <div data-role="navbar">
+  </div>
+  <!-- /page -->
+
+
+  <div data-role="page" id="options" data-theme="a">
+    <div data-role="header" data-theme="a">
+
+      <h1>Options</h1>
+
+
+      <div data-role="navbar">
         <ul>
-            <li><a data-rel="back" data-icon="back">Back</a></li>
-  
-          </ul>
-    </div><!-- /navbar -->
- </div><!-- /header -->
+          <li><a data-rel="back" data-icon="back">Back</a></li>
 
- <div data-role="content">
- <div data-role="collapsible-set">
+        </ul>
+      </div>
+      <!-- /navbar -->
+    </div>
+    <!-- /header -->
+
+    <div data-role="content">
+      <div data-role="collapsible-set" id="accordion">
 
         <div data-role="collapsible" data-collapsed="true">
           <h3>EasyMappr Site Login</h3>
           <div id='usn'>
-            <label for="user">Username: </label> <input type="text"
-              id="user" name="user" class="required" />
+            <label for="user">Username: </label> <input type="text" id="user"
+              name="user" class="required" />
           </div>
           <div id='pss'>
             <label for="passw">Password: </label> <input type="password"
@@ -72,99 +79,119 @@
           </div>
           <br />
           <fieldset class="ui-grid-a">
-    <div class="ui-block-a" id="elogin"><button type="button" id="login_submit">Login</button></div>
-    <div class="ui-block-b" id="elogout"><button type="button" id="logout">Logout</button></div>     
-</fieldset>
+            <div class="ui-block-a" id="elogin">
+              <button type="button" id="login_submit">Login</button>
+            </div>
+            <div class="ui-block-b" id="elogout">
+              <button type="button" id="logout">Logout</button>
+            </div>
+          </fieldset>
         </div>
-        
+
         <div data-role="collapsible">
           <h3>OSM Login</h3>
-            <label for="username">Username: </label> <input type="text"
-              id="username" name="username" class="required" />
-            <br/><br/>
-            
-            <label for="pass">Password: </label>
-      <input type="password" id="pass" name="pass" class="required"/>
-            <br/><br/>
-            <fieldset class="ui-grid-a">
-    <div class="ui-block-a" id="login"><button type="button" id="page_login_submit">Login</button></div>
-    <div class="ui-block-b" id="logout"><button type="button" id="page_logout">Logout</button></div>     
-</fieldset>
+          <div>
+          <label for="username">Username: </label> <input type="text"
+            id="username" name="username" class="required" /> <label for="pass">Password:
+          </label> <input type="password" id="pass" name="pass" class="required" /> <br />
+          <fieldset class="ui-grid-a">
+            <div class="ui-block-a" id="plogin">
+              <button type="button" id="page_login_submit">Login</button>
+            </div>
+            <div class="ui-block-b" id="plogout">
+              <button type="button" id="page_logout">Logout</button>
+            </div>
+          </fieldset>
+          </div>
         </div>
-        <div data-role="collapsible">
-          <h3>Change Preset Url</h3>
-            <div>
-        <fieldset class="ui-grid-a">
-      
-      <div>
-      <label for="presetUrl">Preset URl</label>
-      <input type="text" id="presetUrl" />
-    </div>
-    <div class="ui-block-a" id="setUrl"><button type="button" id="setUrl">Set URL</button></div>
-    
-</fieldset>
-        </div>
-        </div>
+
       </div>
- 
+    </div>
+    <!-- /content -->
 
-  </div><!-- /content -->
+  </div>
+  <!-- /page -->
 
-</div><!-- /page -->
 
-<div data-role="page" id="mainform" data-theme="a">
 
- <div data-role="header" data-theme="a">
- 
-   <h1>EasyMappr</h1>
- 
-  <div data-role="navbar">
+  <div data-role="page" id="mainform" data-theme="a">
+
+    <div data-role="header" data-theme="a">
+
+      <h1>EasyMappr</h1>
+
+      <div data-role="navbar">
         <ul>
-            <li><a data-rel="back" data-icon="back" >Back</a></li>
-            <li><a id="upload" data-icon="arrow-u">Upload</a></li>
-           
+          <li><a data-rel="back" data-icon="back">Back</a></li>
+          <li><a id="edit" data-icon="plus">Edit Points</a></li>
+          <li><a id="upload" data-icon="arrow-u">Upload</a></li>
+
         </ul>
-    </div><!-- /navbar -->
-  
- 
- </div><!-- /header -->
-
- <div data-role="content">
-   <form class="myform" method="get">
-	
-		
-   </form>
-   <button type="button" id="page_save_submit" data-icon="check">Save</button>
-   <div data-role="footer"> 
-	<h6>&copy; 2012</h6> 
-</div> 
- </div><!-- /content -->
-
-</div><!-- /page -->
+      </div>
+      <!-- /navbar -->
 
 
-  </body>
-  
-  
-  <script type="text/javascript" src="jquery-1.8.2.min.js"></script>
-    
-    <script>
-    
-        $(document).bind("mobileinit", function(){
-         
-            $.support.cors = true;
-            $.mobile.allowCrossDomainPages = true;
-            $.mobile.defaultPageTransition = 'none';
-            $.mobile.touchOverflowEnabled = false;
-            $.mobile.defaultDialogTransition = 'none';
-        });
-        
-    </script>  
-    <script type="text/javascript" charset="utf-8" src="cordova-1.8.1.min.js"></script>
-    <script type="text/javascript" src="jquery.mobile-1.1.0.min.js"></script>
-     <script type="text/javascript" src="jquery.blockUI.min.js"></script>
-    <script type="text/javascript" src="main.js"></script>
-  
+    </div>
+    <!-- /header -->
+
+    <div data-role="content">
+      <form class="myform" method="get"></form>
+      <button type="button" id="page_save_submit" data-icon="check">Save</button>
+      <div data-role="footer">
+        <h6>&copy; 2012</h6>
+      </div>
+    </div>
+    <!-- /content -->
+
+  </div>
+  <!-- /page -->
+
+
+  <div data-role="page" id="edit_page" data-theme="a">
+    <div data-role="header" data-theme="a">
+      <h1>EasyMappr</h1>
+      <div data-role="navbar">
+        <ul>
+          <li><a data-rel="back" data-icon="back">Back</a></li>
+        </ul>
+      </div>
+      <!-- /navbar -->
+    </div>
+    <!-- /header -->
+
+    <div data-role="content">
+      <div data-role="collapsible-set" id="edit_content">
+      
+      </div>
+      <div data-role="footer">
+        <h6>&copy; 2012</h6>
+      </div>
+    </div>
+    <!-- /content -->
+
+  </div>
+  <!-- /page -->
+
+</body>
+
+
+<script type="text/javascript" src="jquery-1.8.2.min.js"></script>
+
+<script>
+  $(document).bind("mobileinit", function() {
+
+    $.support.cors = true;
+    $.mobile.allowCrossDomainPages = true;
+    $.mobile.defaultPageTransition = 'none';
+    $.mobile.touchOverflowEnabled = false;
+    $.mobile.defaultDialogTransition = 'none';
+  });
+</script>
+<script type="text/javascript" charset="utf-8" src="cordova-1.8.1.min.js"></script>
+<script type="text/javascript" src="jquery.mobile-1.1.0.min.js"></script>
+<script type="text/javascript" src="jquery.blockUI.min.js"></script>
+<script type="text/javascript" src="main.js"></script>
+
 </html>
 
 
