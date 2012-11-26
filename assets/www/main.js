@@ -7,6 +7,8 @@ var userIds = new Array();
 var lats = new Array();
 var z = '';
 var access = false;
+var save;
+
 $(document).ready(
     function() {
 
@@ -19,6 +21,8 @@ $(document).ready(
         }
       });
 
+      save = new saveChanges();
+      
       loginstate().then(function(x) {
 
         mainPage(x);
@@ -192,60 +196,53 @@ $(document).ready(
         });
         if (mainForm == '')
         {
-//alert(localStorage.url);
+
           makeForm(localStorage.url);
         } else
         {
-  //        alert(localStorage.url);
+
           $(".myform").empty();
           makeForm(localStorage.url);
         }
       });
       
-      $("#edit").click(function() {
-        makeEditable().then(function(f){
-          f.trigger("create");
-          $.mobile.changePage("#edit_page", "slide", true, false);
-        });
-        
-        
-      });
-      
-      $("#edit_page").live("pagebeforeshow", function(event) {
-
-      });
 
       // Wait for PhoneGap to load
       document.addEventListener("deviceready", onDeviceReady, false);
 
       var watchID = null;
+      
       // PhoneGap is ready
       function onDeviceReady() {
 
-        $.unblockUI();
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, readEmp, failReadEmp);
 
-        var shortName = 'mapit';
+        var shortName = 'mapityo';
         var version = '1.0';
-        var displayName = 'mapit';
+        var displayName = 'mapityo';
         var maxSize = 50000;
+        
         db = openDatabase(shortName, version, displayName, maxSize);
+        
         db.transaction(function(transaction) {
 
-          transaction.executeSql('CREATE TABLE IF NOT EXISTS userDetails ' + ' (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' + ' usr TEXT NOT NULL, latlong TEXT NOT NULL,'+' title TEXT NOT NULL,'
-              + ' time TEXT NOT NULL, submitted TEXT NOT NULL);');
+          transaction.executeSql('CREATE TABLE IF NOT EXISTS userDetails ' + '(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' + 'usr TEXT NOT NULL, latlong TEXT NOT NULL,'
+              + ' title TEXT NOT NULL, editMode TEXT NOT NULL,' + ' time TEXT NOT NULL, submitted TEXT NOT NULL);');
         });
+        
         db.transaction(function(transaction) {
 
-          transaction.executeSql('CREATE TABLE IF NOT EXISTS keyvalues ' + ' (id INTEGER NOT NULL, ' + ' key TEXT NOT NULL, value TEXT NOT NULL, sub TEXT NOT NULL);');
+          transaction.executeSql('CREATE TABLE IF NOT EXISTS keyvalues ' + ' (id INTEGER NOT NULL, ' + 'key TEXT NOT NULL, value TEXT NOT NULL, sub TEXT NOT NULL);');
         });
+        
         var options = {
           enableHighAccuracy : true,
           frequency : 3000
         };
+        
         watchID = navigator.geolocation.watchPosition(onSuccess, onerror, options);
-
+        $.unblockUI();
       }
       
       // onSuccess Geolocation
@@ -269,70 +266,282 @@ $(document).ready(
 
     });
 
-function makeEditable(){
-  var d = $.Deferred();
-  var listform = $("#edit_content");
-  var collapsible ;
-
-  db.transaction(function(transaction) {
-    transaction.executeSql('SELECT * FROM userDetails WHERE submitted=?;', [ 0 ], function(transaction, result) {
-       
-      for ( var k = 0; k < result.rows.length; k++)
-      {
-        alert("its "+result.rows.item(i).title);
-        
-        listData(result.rows.item(i).id).then(function(z){
-          collapsible = $('<div data-role="collapsible" data-collapsed="false"><h3>'+result.rows.item(i).title+' @('+result.rows.item(i).latlong+')</h3></div>');
-          collapsible.append(z);
-          
-        });
-        
-      }
-      listform.append(collapsible);
-      d.resolve(listform);
-      
+$("#edit").click(function() {
+  
+  $.blockUI({
+    message : '<h4><img src="images/ajax-loader.gif" /><br/>Loading Edit Values...</h4>',
+    css : {
+      top : ($(window).height()) / 3 + 'px',
+      left : ($(window).width() - 200) / 2 + 'px',
+      width : '200px',
+      backgroundColor : '#C9C9C9',
+      '-webkit-border-radius' : '10px',
+      '-moz-border-radius' : '10px',
+      color : '#FFFFFF',
+      border : 'none'
     }
-
-    , function(transaction, error) {
-      
-      d.reject();
-    });
   });
-  return d;
+
+  var num = $("#edit_content").children().length;
+  checkDB().then(function(){
+    if (num > 0)
+    {
+      $("#edit_content").empty();
+      save.makeEditForm();
+    } else
+    {
+      save.makeEditForm();
+    }
+    
+  }).fail(function(){
+    alert("You Have No Data to Edit");
+  });
+  
+
+});
+
+$("#saveEdit").click(function() {
+
+  save.saveEditForm();
+});
+
+function saveChanges() {
+
+  this.editstat = 'true';
+  
+  this.checkEdit = function() {
+
+    var d = $.Deferred();
+
+    db.transaction(function(transaction) {
+
+      transaction.executeSql('SELECT * FROM userDetails WHERE editMode = ? AND submitted=?;', [ 0, 0 ], function(transaction, result) {
+if(result.rows.length >=1 ){
+  d.resolve(result.rows.length);
+  
+}else{
+  d.reject(result.rows.length);
+  
+}
+        
+
+      }, function(transaction, error) {
+
+        alert('Error: ' + error.message);
+      });
+    });
+    return d;
+  }
+
+  //reset edit record on the fly
+  this.resetEdit = function() {
+
+    db.transaction(function(tx) {
+
+      tx.executeSql("UPDATE userDetails SET editMode = ?", [ 0 ], null, onError);
+    });
+
+  }
+
+  this.listData = function(k) {
+
+    var d = $.Deferred();
+    var dv = $("<div></div>");
+    var labo;
+    var textbx;
+    var name = '';
+    var shop = '';
+
+    var labo1;
+    var textbx1;
+    labo1 = $('<label for=' + k + ',' + k + '>Id</label>');
+
+    textbx1 = document.createElement('input');
+    textbx1.type = 'text';
+    textbx1.name = k + ',' + k;
+    textbx1.id = k + ',' + k;
+    textbx1.value = k;
+    textbx1.readOnly = true;
+
+    dv.append(labo1);
+    dv.append(textbx1);
+
+    db.transaction(function(transaction) {
+
+      transaction.executeSql('SELECT * FROM keyvalues WHERE id=?;', [ k ], function(transaction, result) {
+
+        // alert("list data its on");
+        for ( var i = 0; i < result.rows.length; i++)
+        {
+          // alert("data its on 2 "+result.rows.item(i).key);
+
+          
+          labo = $('<label for=' + result.rows.item(i).id + "," + result.rows.item(i).key + '>' + result.rows.item(i).key + '</label>');
+
+          textbx = document.createElement('input');
+          textbx.type = 'text';
+          textbx.name = result.rows.item(i).id + "," + result.rows.item(i).key;
+          textbx.id = result.rows.item(i).id + "," + result.rows.item(i).key;
+          textbx.value = result.rows.item(i).value;
+
+          dv.append(labo);
+          dv.append(textbx);
+        }
+
+        d.resolve(dv);
+      }
+
+      , function(transaction, error) {
+
+        alert("its " + error.message);
+      });
+    });
+    return d;
+  }
+
+  //Update edit record on the fly
+  this.updateEdit = function(id) {
+
+    var d = $.Deferred();
+    db.transaction(function(tx) {
+
+      tx.executeSql("UPDATE userDetails SET editMode = ? WHERE id = ?", [ 1, id ], function(transaction, result) {
+console.log("inside update edit set edit mode to 1");
+        d.resolve();
+
+      }, onError);
+    });
+    return d;
+  }
+
+  this.makeEditable = function() {
+
+    var d = $.Deferred();
+    var collapsible;
+    var self =this;
+
+    db.transaction(function(transaction) {
+
+      transaction.executeSql('SELECT * FROM userDetails WHERE editMode=? AND submitted=? LIMIT 1;', [ 0, 0 ], function(transaction, result) {
+
+  self.updateEdit(result.rows.item(0).id).then(function() {
+
+          console.log("updated id " + result.rows.item(0).id);
+  
+          self.listData(result.rows.item(0).id).then(function(z) {
+    
+            collapsible = $('<div data-role="collapsible" data-collapsed="true"><h3>' + result.rows.item(0).title +'</h3></div>');
+            collapsible.append(z);
+            console.log("Inside listdata ");
+            d.resolve(result.rows.item(0).id, collapsible);
+          });
+        });
+ 
+      }
+
+      , function(transaction, error) {
+
+        alert("its " + error.message);
+        d.reject();
+      });
+    });
+    return d;
+  }
+
+  this.makeEditForm = function() {
+
+    var listform = $("#edit_content");
+    var self = this;
+    
+    this.checkEdit().then(function(x){
+      //alert("userdetails has "+x);
+      self.makeEditable().then(function(f, g) {
+//alert("inside make editable");
+  self.editstat = 'false';
+          listform.append(g).trigger('create');
+
+          self.makeEditForm();
+        });
+      
+    }).fail(function(){
+      console.log("No edits left");
+        
+      if(self.editstat == 'false'){
+self.resetEdit();
+        $.mobile.changePage("#edit_page", "slide", true, false);
+      }else{
+alert("You Do not Have Data to Edit "+self.editstat);
+      }
+    });
+    
+  }
+  
+  
+  
+  this.updateResults = function(f) {
+    
+    var items;
+    var self = this;
+   
+      $.each(f, function(key, value) {
+items = key.split(',');
+
+updateKeyVals(value, items[1], items[0]).then(function(a,v,b){
+   $.mobile.changePage("#page_home", "slide", true, false);
+ //alert("Saved Key: " + a + " and Value: " + v + " and id " + b);
+});
+
+
+      });
+   
+  }
+
+  this.saveEditForm = function() {
+
+    var validate = true;
+    var features = {};
+    var texts = jQuery("#edit_content input:text:not([readonly='readonly'])");
+    // var title = $("#openingmessage").val();
+    var edit = 0;
+    var self = this;
+    
+    texts.each(function() {
+
+      if ($(this).val().length > 0)
+      {
+        features[$(this).attr('name')] = $(this).val();
+      } else
+      {
+        validate = false;
+      }
+    });
+
+    if (validate)
+    {
+      self.updateResults(features);
+
+    } else
+    {
+      alert("Please Enter all Values");
+    }
+  }
+
 }
 
-function listData(k){
-  var d = $.Deferred();
-  var dv = $("<form></form>");
-  var labo;
-  var textbx;
-  
-  db.transaction(function(transaction) {
+function updateKeyVals(v, a, b){
+var d = $.Deferred();
+db.transaction(function(tx) {
 
-    transaction.executeSql('SELECT * FROM keyvalues WHERE id=?;', [ k ], function(transaction, result) {
-      //alert("data its on");
-      for ( var i = 0; i < result.rows.length; i++)
-      {
-        //alert("data its on 2 "+result.rows.item(i).key);
-        labo = $('<label for=' + result.rows.item(i).key +''+result.rows.item(i).value + '>' + result.rows.item(i).value + '</label>');
-        
-        textbx = document.createElement('input');
-        textbx.type = 'text';
-        textbx.name = result.rows.item(i).key +''+result.rows.item(i).value;
-        textbx.id = result.rows.item(i).key +''+result.rows.item(i).value;
-        
-        dv.append(labo);
-        dv.append(textbx);
-      }
-      
-      d.resolve(dv);
-    }
+  tx.executeSql('UPDATE keyvalues SET value=? WHERE key=? AND id=?;', [v, a, b], function() {
 
-    , function(transaction, error) {
+    
+d.resolve(a,v,b);
 
-    });
-  });
-  return d;
+  }, onError);
+});
+
+return d;
+
 }
 
 function alertDismissed() {
@@ -477,7 +686,7 @@ function loginstate() {
     dataType : 'json',
     error : function(XMLHttpRequest, textStatus, errorThrown) {
 
-      url = "kiosk.xml";
+      url = "dukas.xml";
       localStorage.url = url;
 
       d.reject(url);
@@ -736,7 +945,7 @@ function mainPage(t) {
   });
 }
 
-function submission(t, latlon, f, u, title) {
+function submission(t, latlon, f,e, u, title) {
 
   this.time = t;
   this.latlon = latlon;
@@ -769,7 +978,7 @@ function submission(t, latlon, f, u, title) {
     localStorage.count = 0;
     db.transaction(function(transaction) {
 
-      transaction.executeSql('INSERT INTO userDetails (usr, latlong, title, time, submitted) VALUES (?, ?, ?, ?, ?);', [ u, latlon, title, t, 0 ], function() {
+      transaction.executeSql('INSERT INTO userDetails (usr, latlong, title, editMode, time, submitted) VALUES (?, ?, ?, ?, ?, ?);', [ u, latlon, title, e, t, 0 ], function() {
 
         d.resolve();
       }, errorHandler);
@@ -848,6 +1057,7 @@ function processForm() {
   var radios = jQuery(".myform input[type='radio']");
   var texts = jQuery(".myform input[type='text']");
   var title = $("#openingmessage").val();
+  var edit = 0;
   
   radios.filter(":checked").each(function() {
 
@@ -880,7 +1090,7 @@ function processForm() {
     var tim = hours + ':' + minutes;
     if (localStorage.usernm != undefined && localStorage.pswd != undefined)
     {
-      var s = new submission(tim, crds, features, localStorage.usernm, localStorage.title);
+      var s = new submission(tim, crds, features, edit, localStorage.usernm, localStorage.title);
       s.saveUser().then(function() {
 
         s.getEntryId().then(function(x) {
