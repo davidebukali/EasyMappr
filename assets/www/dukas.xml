@@ -1,0 +1,20 @@
+<presets description="Small shops selling general products in containers around Kampala" shortdescription="Dukas">
+
+<item name="Type of Duka">
+<space/>
+<combo key="shop" text="Shop type" values="kiosk,clothes,hairdresser,hardware,mobile phone,newsagent"/>
+<space/>
+</item>
+
+
+<item name="Basics" type="node">
+<space/>
+<text key="name" text="Name" delete_if_empty="true"/>
+<text key="operator" text="Run/Owned by" />
+<combo key="opening_hours" text="Opening Hours" values="24/7,Mo-Fr 08:30-20:00,Tu-Su 08:00-15:00; Sa 08:00-12:00" default="" delete_if_empty="true"/>
+<text key="color" text="Color" />
+<text key="note" text="Note" />
+<space/>
+</item>
+
+</presets>
