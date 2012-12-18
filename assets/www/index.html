@@ -5,7 +5,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="theme.min.css" />
-<link rel="stylesheet" href="jquery.mobile.structure-1.1.0.min.css" />
+<link rel="stylesheet" href="jquery.mobile.structure-1.2.0.min.css" />
 </head>
 <body>
 
@@ -160,11 +160,12 @@
     <!-- /header -->
 
     <div data-role="content">
-      <div data-role="collapsible-set" id="edit_content">
-      
+      <div data-role="collapsible-set" >
+      <form id="edit_content"></form>
+      <a id="saveEdit" data-role="button">Save Changes</a>
       </div>
-      <div data-role="footer">
-        <h6>&copy; 2012</h6>
+      <div data-role="footer" data-position="fixed">
+       
       </div>
     </div>
     <!-- /content -->
@@ -188,7 +189,7 @@
   });
 </script>
 <script type="text/javascript" charset="utf-8" src="cordova-1.8.1.min.js"></script>
-<script type="text/javascript" src="jquery.mobile-1.1.0.min.js"></script>
+<script type="text/javascript" src="jquery.mobile-1.2.0.min.js"></script>
 <script type="text/javascript" src="jquery.blockUI.min.js"></script>
 <script type="text/javascript" src="main.js"></script>
 
