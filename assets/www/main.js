@@ -2,12 +2,8 @@ var db;
 var chsetId = 0;
 var crds;
 var mainForm = '';
-localStorage.URLl = "value";
-var userIds = new Array();
-var lats = new Array();
-var z = '';
-var access = false;
 var save;
+var gps = false;
 
 $(document).ready(
     function() {
@@ -22,7 +18,7 @@ $(document).ready(
       });
 
       save = new saveChanges();
-      
+
       loginstate().then(function(x) {
 
         mainPage(x);
@@ -150,7 +146,7 @@ $(document).ready(
       });
 
       $("#page_home").live("pagebeforeshow", function(event) {
-
+        
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, readEmp, failReadEmp);
         mainPage(localStorage.url);
 
@@ -181,37 +177,46 @@ $(document).ready(
 
       $("#myButton").click(function() {
 
-        $.blockUI({
-          message : '<h4><img src="images/ajax-loader.gif" /><br/>Loading Form...</h4>',
-          css : {
-            top : ($(window).height()) / 3 + 'px',
-            left : ($(window).width() - 200) / 2 + 'px',
-            width : '200px',
-            backgroundColor : '#C9C9C9',
-            '-webkit-border-radius' : '10px',
-            '-moz-border-radius' : '10px',
-            color : '#FFFFFF',
-            border : 'none'
+        if(gps == true){
+          $.blockUI({
+            message : '<h4><img src="images/ajax-loader.gif" /><br/>Loading Form...</h4>',
+            css : {
+              top : ($(window).height()) / 3 + 'px',
+              left : ($(window).width() - 200) / 2 + 'px',
+              width : '200px',
+              backgroundColor : '#C9C9C9',
+              '-webkit-border-radius' : '10px',
+              '-moz-border-radius' : '10px',
+              color : '#FFFFFF',
+              border : 'none'
+            }
+          });
+          
+          if (mainForm == '')
+          {
+
+            makeForm(localStorage.url);
+            
+          } else
+          {
+
+            $(".myform").empty();
+            makeForm(localStorage.url);
+            
           }
-        });
-        if (mainForm == '')
-        {
-
-          makeForm(localStorage.url);
-        } else
-        {
-
-          $(".myform").empty();
-          makeForm(localStorage.url);
+          
+        }else{
+          alert("Please Turn on GPS To Start Mapping");
+          
         }
+
       });
-      
 
       // Wait for PhoneGap to load
       document.addEventListener("deviceready", onDeviceReady, false);
 
       var watchID = null;
-      
+
       // PhoneGap is ready
       function onDeviceReady() {
 
@@ -222,32 +227,32 @@ $(document).ready(
         var version = '1.0';
         var displayName = 'mapityo';
         var maxSize = 50000;
-        
+
         db = openDatabase(shortName, version, displayName, maxSize);
-        
+
         db.transaction(function(transaction) {
 
           transaction.executeSql('CREATE TABLE IF NOT EXISTS userDetails ' + '(id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, ' + 'usr TEXT NOT NULL, latlong TEXT NOT NULL,'
               + ' title TEXT NOT NULL, editMode TEXT NOT NULL,' + ' time TEXT NOT NULL, submitted TEXT NOT NULL);');
         });
-        
+
         db.transaction(function(transaction) {
 
           transaction.executeSql('CREATE TABLE IF NOT EXISTS keyvalues ' + ' (id INTEGER NOT NULL, ' + 'key TEXT NOT NULL, value TEXT NOT NULL, sub TEXT NOT NULL);');
         });
-        
+
         var options = {
-          enableHighAccuracy : true,
-          frequency : 3000
+            enableHighAccuracy : true,
+            frequency : 3000
         };
-        
+
         watchID = navigator.geolocation.watchPosition(onSuccess, onerror, options);
         $.unblockUI();
       }
-      
+
       // onSuccess Geolocation
       function onSuccess(position) {
-
+        gps = true;
         localStorage.lat = position.coords.latitude;
         localStorage.lon = position.coords.longitude;
 
@@ -259,15 +264,21 @@ $(document).ready(
 
       // onError Callback receives a PositionError object
       function onerror(error) {
-
-        showAlert(error.message, 'GPS', 'Done');
-        return false;
+        var gpsoff = "The last location provider was disabled";
+        if (error.message == gpsoff)
+        {
+          alert("Please Check That GPS Switched is On");
+          gps = false;
+        }
+        
       }
 
     });
 
 $("#edit").click(function() {
-  
+
+  var num = $("#edit_content").children().length;
+
   $.blockUI({
     message : '<h4><img src="images/ajax-loader.gif" /><br/>Loading Edit Values...</h4>',
     css : {
@@ -282,8 +293,8 @@ $("#edit").click(function() {
     }
   });
 
-  var num = $("#edit_content").children().length;
-  checkDB().then(function(){
+  checkDB().then(function() {
+
     if (num > 0)
     {
       $("#edit_content").empty();
@@ -294,13 +305,12 @@ $("#edit").click(function() {
       save.makeEditForm();
       $.unblockUI();
     }
-    
-    
-  }).fail(function(){
+
+  }).fail(function() {
+
     alert("You Have No Data to Edit");
     $.unblockUI();
   });
-  
 
 });
 
@@ -312,7 +322,7 @@ $("#saveEdit").click(function() {
 function saveChanges() {
 
   this.editstat = 'true';
-  
+
   this.checkEdit = function() {
 
     var d = $.Deferred();
@@ -320,14 +330,16 @@ function saveChanges() {
     db.transaction(function(transaction) {
 
       transaction.executeSql('SELECT * FROM userDetails WHERE editMode = ? AND submitted=?;', [ 0, 0 ], function(transaction, result) {
-if(result.rows.length >=1 ){
-  d.resolve(result.rows.length);
-  
-}else{
-  d.reject(result.rows.length);
-  
-}
-        
+
+        if (result.rows.length >= 1)
+        {
+          d.resolve(result.rows.length);
+
+        } else
+        {
+          d.reject(result.rows.length);
+
+        }
 
       }, function(transaction, error) {
 
@@ -376,7 +388,7 @@ if(result.rows.length >=1 ){
 
         for ( var i = 0; i < result.rows.length; i++)
         {
-         
+
           labo = $('<label for=' + result.rows.item(i).id + "," + result.rows.item(i).key + '>' + result.rows.item(i).key + '</label>');
 
           textbx = document.createElement('input');
@@ -387,8 +399,9 @@ if(result.rows.length >=1 ){
 
           dv.append(labo);
           dv.append(textbx);
-          
-          if(result.rows.item(i).key == "name"){
+
+          if (result.rows.item(i).key == "name")
+          {
             name = result.rows.item(i).value;
           }
         }
@@ -406,12 +419,10 @@ if(result.rows.length >=1 ){
 
   //Update edit record on the fly
   this.updateEdit = function(id) {
-
     var d = $.Deferred();
     db.transaction(function(tx) {
 
       tx.executeSql("UPDATE userDetails SET editMode = ? WHERE id = ?", [ 1, id ], function(transaction, result) {
-console.log("inside update edit set edit mode to 1");
         d.resolve();
 
       }, onError);
@@ -423,25 +434,22 @@ console.log("inside update edit set edit mode to 1");
 
     var d = $.Deferred();
     var collapsible;
-    var self =this;
+    var self = this;
 
     db.transaction(function(transaction) {
 
       transaction.executeSql('SELECT * FROM userDetails WHERE editMode=? AND submitted=? LIMIT 1;', [ 0, 0 ], function(transaction, result) {
 
-  self.updateEdit(result.rows.item(0).id).then(function() {
-
-          console.log("updated id " + result.rows.item(0).id);
-  
+        self.updateEdit(result.rows.item(0).id).then(function() {
           self.listData(result.rows.item(0).id).then(function(z, m) {
-    
-            collapsible = $('<div data-role="collapsible" data-collapsed="true"><h3>' + result.rows.item(0).title +' - '+m+'</h3></div>');
+
+            collapsible = $('<div data-role="collapsible" data-collapsed="true"><h3>' + result.rows.item(0).title + ' - ' + m + '</h3></div>');
             collapsible.append(z);
-            //console.log("Inside listdata ");
+
             d.resolve(result.rows.item(0).id, collapsible);
           });
         });
- 
+
       }
 
       , function(transaction, error) {
@@ -457,48 +465,48 @@ console.log("inside update edit set edit mode to 1");
 
     var listform = $("#edit_content");
     var self = this;
-    
-    this.checkEdit().then(function(x){
-      //alert("userdetails has "+x);
-      self.makeEditable().then(function(f, g) {
-//alert("inside make editable");
-  self.editstat = 'false';
-          listform.append(g).trigger('create');
 
-          self.makeEditForm();
-        });
-      
-    }).fail(function(){
-      console.log("No edits left");
-        
-      if(self.editstat == 'false'){
-self.resetEdit();
+    this.checkEdit().then(function(x) {
+
+      self.makeEditable().then(function(f, g) {
+
+        self.editstat = 'false';
+        listform.append(g).trigger('create');
+
+        self.makeEditForm();
+      });
+
+    }).fail(function() {
+
+      if (self.editstat == 'false')
+      {
+        self.resetEdit();
         $.mobile.changePage("#edit_page", "slide", true, false);
-      }else{
-alert("You Do not Have Data to Edit "+self.editstat);
+      } else
+      {
+        alert("You Do not Have Data to Edit ");
       }
     });
-    
+
   }
-  
-  
-  
+
   this.updateResults = function(f) {
-    
+
     var items;
     var self = this;
-   
-      $.each(f, function(key, value) {
-items = key.split(',');
 
-updateKeyVals(value, items[1], items[0]).then(function(a,v,b){
-   $.mobile.changePage("#page_home", "slide", true, false);
- //alert("Saved Key: " + a + " and Value: " + v + " and id " + b);
-});
+    $.each(f, function(key, value) {
 
+      items = key.split(',');
 
+      updateKeyVals(value, items[1], items[0]).then(function(a, v, b) {
+
+        $.mobile.changePage("#page_home", "slide", true, false);
+        
       });
-   
+
+    });
+
   }
 
   this.saveEditForm = function() {
@@ -506,10 +514,10 @@ updateKeyVals(value, items[1], items[0]).then(function(a,v,b){
     var validate = true;
     var features = {};
     var texts = jQuery("#edit_content input:text:not([readonly='readonly'])");
-    // var title = $("#openingmessage").val();
+    
     var edit = 0;
     var self = this;
-    
+
     texts.each(function() {
 
       if ($(this).val().length > 0)
@@ -533,19 +541,19 @@ updateKeyVals(value, items[1], items[0]).then(function(a,v,b){
 
 }
 
-function updateKeyVals(v, a, b){
-var d = $.Deferred();
-db.transaction(function(tx) {
+function updateKeyVals(v, a, b) {
 
-  tx.executeSql('UPDATE keyvalues SET value=? WHERE key=? AND id=?;', [v, a, b], function() {
+  var d = $.Deferred();
+  db.transaction(function(tx) {
 
-    
-d.resolve(a,v,b);
+    tx.executeSql('UPDATE keyvalues SET value=? WHERE key=? AND id=?;', [ v, a, b ], function() {
 
-  }, onError);
-});
+      d.resolve(a, v, b);
 
-return d;
+    }, onError);
+  });
+
+  return d;
 
 }
 
@@ -556,9 +564,9 @@ function alertDismissed() {
 function showAlert(msg, title, button) {
 
   navigator.notification.alert(msg, // message
-  alertDismissed, // callback
-  title, // title
-  button // buttonName
+      alertDismissed, // callback
+      title, // title
+      button // buttonName
   );
 }
 
@@ -580,12 +588,12 @@ $("#upload").click(function() {
   states[Connection.NONE] = 'No network connection';
   if ((states[networkState] == 'No network connection') || (states[networkState] == 'Unknown connection'))
   {
-    
+
     showAlert('Your phone web connection is not working. Please check and Try Again.', 'Internet Issue', 'Done');
     return false;
   } else
   {
-    
+
     if (chsetId != 0)
     {
       isChangesetActive(chsetId).then(function() {
@@ -644,7 +652,7 @@ function login(name, pass) {
     success : function(data) {
 
       localStorage.url = "http://beta.easymappr.com/preset"
-      window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, saveEmpUser, empfail);
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, saveEmpUser, empfail);
       $.mobile.changePage("#page_home", "slide", true, false);
       d.resolve("EasyMappr Login Success");
 
@@ -718,7 +726,6 @@ function loginStatus() {
     error : function(XMLHttpRequest, textStatus, errorThrown) {
 
       d.reject();
-      //alert('Cannot Connect to EasyMappr Site. ' + errorThrown);
 
     },
     success : function(data) {
@@ -950,7 +957,6 @@ function mainPage(t) {
   });
 }
 
-
 function errorHandler(transaction, error) {
 
   alert('Database Error was ' + error.message + ' please try again');
@@ -969,12 +975,11 @@ function saveSettings() {
 
   localStorage.URLl = "http://api.openstreetmap.org/";
 
-  if ($('#username').val().length > 0 && $('#pass').val().length > 0 && localStorage.URLl != "value")
+  if ($('#username').val().length > 0 && $('#pass').val().length > 0 && localStorage.URLl != undefined)
   {
 
     createChangeset(localStorage.URLl).then(function(hu) {
 
-      // access = true;
       chsetId = hu;
       window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFSw, failw);
       $.mobile.changePage("#page_home", "slide", true, false);
@@ -1092,7 +1097,6 @@ function submission(t, latlon, f, u, title) {
     var d = $.Deferred();
     var idi;
     db.transaction(function(transaction) {
-      
 
       transaction.executeSql('SELECT * FROM userDetails;', null, function(transaction, result) {
 
@@ -1201,10 +1205,9 @@ function makeForm(b) {
     },
     success : function(xml) {
 
-      mainForm = 'true';
       var fieldset;
       $(xml).find('item').each(function() {
-
+        mainForm = 'set';
         fieldset = $('<fieldset id="head"></fieldset>');
         var olditem = $(this).attr('name');
         var item = replaceAll(olditem, "_", " ");
@@ -1274,18 +1277,7 @@ function makeForm(b) {
             }
             fieldset.append(radioFieldset);
           } else if ((this).nodeName == "label")
-          { /*
-                               var clas;
-                               if (labelCount == 0)
-                               {
-                                 clas = "h1";
-                               } else if (labelCount == 0)
-                               {
-                                 clas = "h2";
-                               } else if (labelCount == 1)
-                               {
-                                 clas = "h3";
-                               }         */
+          {
             var a = $(this).attr('text');
             var lab = $('<label>' + ucwords(a) + '</label><br/>');
             fieldset.append(lab);
@@ -1384,7 +1376,7 @@ function makeForm(b) {
             }
             fieldset.append(radioFieldset);
 
-          }else if ((this).nodeName == "check")
+          } else if ((this).nodeName == "check")
           {
 
             var oldtxt = $(this).attr('text');
@@ -1406,11 +1398,10 @@ function makeForm(b) {
             var newRadio;
             var newRadioLabel;
 
-                
-                newRadio = $('<input type="checkbox" name=' + kiy + ' id=' + kiy + txt + ' value=' + txt + ' />');
-                newRadioLabel = $('<label for=' + kiy + txt + '>' + txt + '</label>');
-                radioFieldset.append(newRadio);
-                radioFieldset.append(newRadioLabel);
+            newRadio = $('<input type="checkbox" name=' + kiy + ' id=' + kiy + txt + ' value=' + txt + ' />');
+            newRadioLabel = $('<label for=' + kiy + txt + '>' + txt + '</label>');
+            radioFieldset.append(newRadio);
+            radioFieldset.append(newRadioLabel);
 
             fieldset.append(radioFieldset);
 
@@ -1577,7 +1568,7 @@ function makeForm(b) {
                 }
                 fieldset.append(radioFieldset);
 
-              }else if ((this).nodeName == "check")
+              } else if ((this).nodeName == "check")
               {
 
                 var oldtxt = $(this).attr('text');
@@ -1599,11 +1590,10 @@ function makeForm(b) {
                 var newRadio;
                 var newRadioLabel;
 
-                    
-                    newRadio = $('<input type="checkbox" name=' + kiy + ' id=' + kiy + txt + ' value=' + txt + ' />');
-                    newRadioLabel = $('<label for=' + kiy + txt + '>' + txt + '</label>');
-                    radioFieldset.append(newRadio);
-                    radioFieldset.append(newRadioLabel);
+                newRadio = $('<input type="checkbox" name=' + kiy + ' id=' + kiy + txt + ' value=' + txt + ' />');
+                newRadioLabel = $('<label for=' + kiy + txt + '>' + txt + '</label>');
+                radioFieldset.append(newRadio);
+                radioFieldset.append(newRadioLabel);
 
                 fieldset.append(radioFieldset);
 
@@ -1663,117 +1653,117 @@ function makeBeforeSend(method) {
 }
 
 var Base64 = {
-  // private property
-  _keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-  // public method for encoding
-  encode : function(input) {
+    // private property
+    _keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+    // public method for encoding
+    encode : function(input) {
 
-    output = "";
-    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-    var i = 0;
-    input = Base64._utf8_encode(input);
-    while (i < input.length)
-    {
-      chr1 = input.charCodeAt(i++);
-      chr2 = input.charCodeAt(i++);
-      chr3 = input.charCodeAt(i++);
-      enc1 = chr1 >> 2;
-      enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-      enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-      enc4 = chr3 & 63;
-      if (isNaN(chr2))
+      output = "";
+      var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+      var i = 0;
+      input = Base64._utf8_encode(input);
+      while (i < input.length)
       {
-        enc3 = enc4 = 64;
-      } else if (isNaN(chr3))
-      {
-        enc4 = 64;
+        chr1 = input.charCodeAt(i++);
+        chr2 = input.charCodeAt(i++);
+        chr3 = input.charCodeAt(i++);
+        enc1 = chr1 >> 2;
+        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+        enc4 = chr3 & 63;
+        if (isNaN(chr2))
+        {
+          enc3 = enc4 = 64;
+        } else if (isNaN(chr3))
+        {
+          enc4 = 64;
+        }
+        output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
       }
-      output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-    }
-    return output;
-  },
-  // public method for decoding
-  decode : function(input) {
+      return output;
+    },
+    // public method for decoding
+    decode : function(input) {
 
-    var output = "";
-    var chr1, chr2, chr3;
-    var enc1, enc2, enc3, enc4;
-    var i = 0;
-    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-    while (i < input.length)
-    {
-      enc1 = this._keyStr.indexOf(input.charAt(i++));
-      enc2 = this._keyStr.indexOf(input.charAt(i++));
-      enc3 = this._keyStr.indexOf(input.charAt(i++));
-      enc4 = this._keyStr.indexOf(input.charAt(i++));
-      chr1 = (enc1 << 2) | (enc2 >> 4);
-      chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-      chr3 = ((enc3 & 3) << 6) | enc4;
-      output = output + String.fromCharCode(chr1);
-      if (enc3 != 64)
+      var output = "";
+      var chr1, chr2, chr3;
+      var enc1, enc2, enc3, enc4;
+      var i = 0;
+      input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+      while (i < input.length)
       {
-        output = output + String.fromCharCode(chr2);
+        enc1 = this._keyStr.indexOf(input.charAt(i++));
+        enc2 = this._keyStr.indexOf(input.charAt(i++));
+        enc3 = this._keyStr.indexOf(input.charAt(i++));
+        enc4 = this._keyStr.indexOf(input.charAt(i++));
+        chr1 = (enc1 << 2) | (enc2 >> 4);
+        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+        chr3 = ((enc3 & 3) << 6) | enc4;
+        output = output + String.fromCharCode(chr1);
+        if (enc3 != 64)
+        {
+          output = output + String.fromCharCode(chr2);
+        }
+        if (enc4 != 64)
+        {
+          output = output + String.fromCharCode(chr3);
+        }
       }
-      if (enc4 != 64)
-      {
-        output = output + String.fromCharCode(chr3);
-      }
-    }
-    output = Base64._utf8_decode(output);
-    return output;
-  },
-  // private method for UTF-8 encoding
-  _utf8_encode : function(string) {
+      output = Base64._utf8_decode(output);
+      return output;
+    },
+    // private method for UTF-8 encoding
+    _utf8_encode : function(string) {
 
-    string = string.replace(/\r\n/g, "\n");
-    var utftext = "";
-    for ( var n = 0; n < string.length; n++)
-    {
-      var c = string.charCodeAt(n);
-      if (c < 128)
+      string = string.replace(/\r\n/g, "\n");
+      var utftext = "";
+      for ( var n = 0; n < string.length; n++)
       {
-        utftext += String.fromCharCode(c);
-      } else if ((c > 127) && (c < 2048))
-      {
-        utftext += String.fromCharCode((c >> 6) | 192);
-        utftext += String.fromCharCode((c & 63) | 128);
-      } else
-      {
-        utftext += String.fromCharCode((c >> 12) | 224);
-        utftext += String.fromCharCode(((c >> 6) & 63) | 128);
-        utftext += String.fromCharCode((c & 63) | 128);
+        var c = string.charCodeAt(n);
+        if (c < 128)
+        {
+          utftext += String.fromCharCode(c);
+        } else if ((c > 127) && (c < 2048))
+        {
+          utftext += String.fromCharCode((c >> 6) | 192);
+          utftext += String.fromCharCode((c & 63) | 128);
+        } else
+        {
+          utftext += String.fromCharCode((c >> 12) | 224);
+          utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+          utftext += String.fromCharCode((c & 63) | 128);
+        }
       }
-    }
-    return utftext;
-  },
-  // private method for UTF-8 decoding
-  _utf8_decode : function(utftext) {
+      return utftext;
+    },
+    // private method for UTF-8 decoding
+    _utf8_decode : function(utftext) {
 
-    var string = "";
-    var i = 0;
-    var c = c1 = c2 = 0;
-    while (i < utftext.length)
-    {
-      c = utftext.charCodeAt(i);
-      if (c < 128)
+      var string = "";
+      var i = 0;
+      var c = c1 = c2 = 0;
+      while (i < utftext.length)
       {
-        string += String.fromCharCode(c);
-        i++;
-      } else if ((c > 191) && (c < 224))
-      {
-        c2 = utftext.charCodeAt(i + 1);
-        string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-        i += 2;
-      } else
-      {
-        c2 = utftext.charCodeAt(i + 1);
-        c3 = utftext.charCodeAt(i + 2);
-        string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-        i += 3;
+        c = utftext.charCodeAt(i);
+        if (c < 128)
+        {
+          string += String.fromCharCode(c);
+          i++;
+        } else if ((c > 191) && (c < 224))
+        {
+          c2 = utftext.charCodeAt(i + 1);
+          string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+          i += 2;
+        } else
+        {
+          c2 = utftext.charCodeAt(i + 1);
+          c3 = utftext.charCodeAt(i + 2);
+          string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+          i += 3;
+        }
       }
+      return string;
     }
-    return string;
-  }
 }
 function make_base_auth(user, pass) {
 
