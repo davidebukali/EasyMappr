@@ -206,7 +206,7 @@ $(document).ready(
           }
           
         }else{
-          alert("Please Wait for GPS Fix to Start Mapping");
+          alert("Please Wait for GPS Fix To Start Mapping");
           
         }
 
@@ -278,38 +278,23 @@ $(document).ready(
 $("#edit").click(function() {
 
   var num = $("#edit_content").children().length;
-
-  $.blockUI({
-    message : '<h4><img src="images/ajax-loader.gif" /><br/>Loading Edit Values...</h4>',
-    css : {
-      top : ($(window).height()) / 3 + 'px',
-      left : ($(window).width() - 200) / 2 + 'px',
-      width : '200px',
-      backgroundColor : '#C9C9C9',
-      '-webkit-border-radius' : '10px',
-      '-moz-border-radius' : '10px',
-      color : '#FFFFFF',
-      border : 'none'
-    }
-  });
-
   checkDB().then(function() {
 
     if (num > 0)
     {
       $("#edit_content").empty();
       save.makeEditForm();
-      $.unblockUI();
+      //$.unblockUI();
     } else
     {
       save.makeEditForm();
-      $.unblockUI();
+      //$.unblockUI();
     }
 
   }).fail(function() {
 
     alert("You Have No Data to Edit");
-    $.unblockUI();
+    //$.unblockUI();
   });
 
 });
@@ -468,6 +453,21 @@ function saveChanges() {
 
     this.checkEdit().then(function(x) {
 
+      $.blockUI({
+        message : '<h4><img src="images/ajax-loader.gif" /><br/>Loading Edit Values...</h4>',
+        css : {
+          top : ($(window).height()) / 3 + 'px',
+          left : ($(window).width() - 200) / 2 + 'px',
+          width : '200px',
+          backgroundColor : '#C9C9C9',
+          '-webkit-border-radius' : '10px',
+          '-moz-border-radius' : '10px',
+          color : '#FFFFFF',
+          border : 'none'
+        }
+      });
+      
+      
       self.makeEditable().then(function(f, g) {
 
         self.editstat = 'false';
@@ -482,6 +482,7 @@ function saveChanges() {
       {
         self.resetEdit();
         $.mobile.changePage("#edit_page", "slide", true, false);
+        $.unblockUI();
       } else
       {
         alert("You Do not Have Data to Edit ");
@@ -610,7 +611,8 @@ $("#upload").click(function() {
     } else
     {
 
-      showAlert("Please Sign In from options", "SignIn", "Done");
+      showAlert("Please Sign In to OSM", "SignIn", "Done");
+      $.mobile.changePage("#options", "slide", true, false);
       return false;
     }
   }
@@ -1181,8 +1183,8 @@ function createChangeset(s) {
         $.unblockUI();
       } else if (textStatus == "timeout")
       {
-        alert("Wrong Password: " + localStorage.pswd + " or Username: " + localStorage.usernm);
-        // alert("Server Busy Try Again");
+        alert("Wrong Password or Username");
+        
         $.unblockUI();
       }
     }
@@ -1765,12 +1767,15 @@ var Base64 = {
       return string;
     }
 }
+
+
 function make_base_auth(user, pass) {
 
   var tok = user + ':' + pass;
   var hash = Base64.encode(tok);
   return "Basic " + hash;
 }
+
 function gotFSw(fileSystem) {
 
   fileSystem.root.getFile("pass.txt", {
