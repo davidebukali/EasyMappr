@@ -206,7 +206,7 @@ $(document).ready(
           }
           
         }else{
-          alert("Please Turn on GPS To Start Mapping");
+          alert("Please Wait for GPS Fix to Start Mapping");
           
         }
 
