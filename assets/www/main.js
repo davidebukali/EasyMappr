@@ -9,11 +9,16 @@ $(document).ready(
     function() {
 
       $.blockUI({
-        message : '<h5><img src="images/spinner.gif" /><br/>Please wait...</h5>',
+        message : '<h4><img src="images/ajax-loader.gif" /><br/>Please wait...</h4>',
         css : {
           top : ($(window).height()) / 3 + 'px',
           left : ($(window).width() - 200) / 2 + 'px',
-          width : '200px'
+          width : '200px',
+          backgroundColor : '#C9C9C9',
+          '-webkit-border-radius' : '10px',
+          '-moz-border-radius' : '10px',
+          color : '#FFFFFF',
+          border : 'none'
         }
       });
 
@@ -757,11 +762,16 @@ function isChangesetActive(changeset_id) {
     beforeSend : function(xhr) {
 
       $.blockUI({
-        message : '<h5><img src="images/spinner.gif" /><br/>Please wait...</h5>',
+        message : '<h4><img src="images/ajax-loader.gif" /><br/>Please wait...</h4>',
         css : {
           top : ($(window).height()) / 3 + 'px',
           left : ($(window).width() - 200) / 2 + 'px',
-          width : '200px'
+          width : '200px',
+          backgroundColor : '#C9C9C9',
+          '-webkit-border-radius' : '10px',
+          '-moz-border-radius' : '10px',
+          color : '#FFFFFF',
+          border : 'none'
         }
       });
 
@@ -949,12 +959,24 @@ function mainPage(t) {
     success : function(xml) {
 
       var oldShortDesc = $(xml).find("presets").attr("shortdescription");
-      var newShortDesc = replaceAll(oldShortDesc, "_", " ");
       var olddesc = $(xml).find("presets").attr("description");
-      var desc = replaceAll(olddesc, "_", " ");
+      var newShortDesc;
+      var desc;
+      
+      if(oldShortDesc != undefined || olddesc != undefined){
+        newShortDesc = replaceAll(oldShortDesc, "_", " ");
+        desc = replaceAll(olddesc, "_", " ");
+        
+      }else{
+        newShortDesc = $(xml).find("presets").attr("name");
+        desc = $(xml).find("presets").attr("decription");
+      }
+      
       $("#openingmessage").html(newShortDesc);
       localStorage.title = newShortDesc;
       $("#desc").html(desc);
+      
+      //alert("Opening msg is "+oldShortDesc);
     }
   });
 }
@@ -1775,6 +1797,35 @@ function make_base_auth(user, pass) {
   var hash = Base64.encode(tok);
   return "Basic " + hash;
 }
+
+
+
+function writePreset(fileSystem) {
+  fileSystem.root.getFile(localStorage.preset, {
+    create : true,
+    exclusive : false
+  }, gotPreset, failpreset);
+}
+
+function gotPreset(fileEntry) {
+  fileEntry.createWriter(gotPresetWriter, failpreset);
+}
+
+function gotPresetWriter(writer) {
+  writer.onwriteend = function(evt) {
+    alert("written to file");
+  };
+  writer.seek(writer.length);
+  var auth = localStorage.data;
+  writer.write(auth);
+}
+
+function failpreset(error) {
+  alert("preset write error "+error);
+}
+
+
+
 
 function gotFSw(fileSystem) {
 
