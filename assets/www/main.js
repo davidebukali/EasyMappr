@@ -684,6 +684,7 @@ function logout() {
     success : function(data) {
 
       d.resolve(data);
+      localStorage.url = "dukas.xml";
       localStorage.u = undefined;
       localStorage.p = undefined;
       window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, resetEmp, failreset);

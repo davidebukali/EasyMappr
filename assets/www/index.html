@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="theme.min.css" />
 <link rel="stylesheet" href="jquery.mobile.structure-1.2.0.min.css" />
+<link type="text/css" href="jquery.mobile.toast.css" rel="stylesheet" /> 
 </head>
 <body>
 
@@ -34,7 +35,8 @@
           for="page_preset_lat"><p id="lat"></p></label> <label
           for="page_preset_lon"><p id="lon"></p></label>
       </div>
-
+      <div id="login" data-role="toast">Login Success</div>
+      <div id="my_toast" data-role="toast">Default Preset Not Found</div>
       <div>
         <a id="myButton" data-role="button">START Mapping</a>
       </div>
@@ -138,7 +140,7 @@
       <form class="myform"></form>
       <button type="button" id="page_save_submit" data-icon="check">Save</button>
       <div data-role="footer">
-        <h6>&copy; 2012</h6>
+        <h6>&copy; 2013</h6>
       </div>
     </div>
     <!-- /content -->
@@ -191,6 +193,7 @@
 <script type="text/javascript" charset="utf-8" src="cordova-1.8.1.min.js"></script>
 <script type="text/javascript" src="jquery.mobile-1.2.0.min.js"></script>
 <script type="text/javascript" src="jquery.blockUI.min.js"></script>
+<script type="text/javascript" src="jquery.mobile.toast.js"></script>
 <script type="text/javascript" src="main.js"></script>
 
 </html>
