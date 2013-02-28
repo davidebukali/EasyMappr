@@ -71,8 +71,8 @@ $(document).ready(
             });
 
             login(us, ps).then(function(p) {
-
-              alert(p);
+              $('#login').toast('show');
+              //alert(p);
               $.unblockUI();
             }).fail(function(a) {
 
@@ -616,7 +616,8 @@ $("#upload").click(function() {
     } else
     {
 
-      showAlert("Please Sign In to OSM", "SignIn", "Done");
+      showAlert("Please Sign In to " +
+      		"", "SignIn", "Done");
       $.mobile.changePage("#options", "slide", true, false);
       return false;
     }
@@ -715,6 +716,7 @@ function loginstate() {
     success : function(data) {
 
       url = "http://beta.easymappr.com/preset";
+      
       localStorage.url = url;
       d.resolve(url);
 
@@ -958,7 +960,7 @@ function mainPage(t) {
     url : t,
     dataType : "xml",
     success : function(xml) {
-
+      
       var oldShortDesc = $(xml).find("presets").attr("shortdescription");
       var olddesc = $(xml).find("presets").attr("description");
       var newShortDesc;
@@ -977,9 +979,49 @@ function mainPage(t) {
       localStorage.title = newShortDesc;
       $("#desc").html(desc);
       
-      //alert("Opening msg is "+oldShortDesc);
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown){
+      localStorage.url = "dukas.xml";
+      fillMain("dukas.xml");
+      $('#my_toast').toast('show');
+      
     }
   });
+}
+
+function fillMain(t){
+  
+  $.ajax({
+    type : "GET",
+    url : t,
+    dataType : "xml",
+    success : function(xml) {
+      
+      var oldShortDesc = $(xml).find("presets").attr("shortdescription");
+      var olddesc = $(xml).find("presets").attr("description");
+      var newShortDesc;
+      var desc;
+      
+      if(oldShortDesc != undefined || olddesc != undefined){
+        newShortDesc = replaceAll(oldShortDesc, "_", " ");
+        desc = replaceAll(olddesc, "_", " ");
+        
+      }else{
+        newShortDesc = $(xml).find("presets").attr("name");
+        desc = $(xml).find("presets").attr("decription");
+      }
+      
+      $("#openingmessage").html(newShortDesc);
+      localStorage.title = newShortDesc;
+      $("#desc").html(desc);
+      
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown){
+      $('#my_toast').toast('show');
+      
+    }
+  });
+  
 }
 
 function errorHandler(transaction, error) {
