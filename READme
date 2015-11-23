@@ -1,1 +1,1 @@
-This repo has a project folder emp that contains source for the EasyMappr phonegap app; a tool that makes adding features to Open Street Map a walk in the park. 
+EasyMappr is a mapping tool to map one location at a time on Open Street Map. The source code is in assets folder and can be placed inside a newly created cordova android app; app requires the following cordova plugins: File System, Network Information and Geolocation;
